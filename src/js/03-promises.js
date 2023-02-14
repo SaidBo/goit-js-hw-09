@@ -1,4 +1,4 @@
-import Notiflix from 'notiflix';
+import Notiflix, { Notify } from 'notiflix';
 
 const refs = {
   form: document.querySelector('.form'),
@@ -32,15 +32,23 @@ function onFormSubmit(evt) {
   let delayStep = Number(refs.inputStep.value);
   let amount = Number(refs.inputAmount.value);
 
-  for (let i = 1; i <= amount; i += 1) {
-    createPromise(i, firstDelay)
-      .then(({ position, delay }) => {
-        Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-      })
-      .catch(({ position, delay }) => {
-        Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-      });
+  if (firstDelay < 0 || delayStep < 0 || amount <= 0) {
+    Notify.warning('Значення має бути більше 0');
+  } else {
+    for (let i = 1; i <= amount; i += 1) {
+      createPromise(i, firstDelay)
+        .then(({ position, delay }) => {
+          Notiflix.Notify.success(
+            `✅ Fulfilled promise ${position} in ${delay}ms`
+          );
+        })
+        .catch(({ position, delay }) => {
+          Notiflix.Notify.failure(
+            `❌ Rejected promise ${position} in ${delay}ms`
+          );
+        });
       firstDelay += delayStep;
+    }
   }
 }
 
